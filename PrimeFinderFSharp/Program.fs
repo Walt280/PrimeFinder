@@ -18,39 +18,17 @@
 
 open System
 
-(* Function to print out the list of primes. *)
-let rec printPrimeList list =
-    match list with
-    | head::tail -> 
-        printfn "%d" head
-        printPrimeList tail
-    | [] -> ()
-
 (* 
- Function to check if number is prime, based on a list of primes.
- numSqrt used to reduce amount of division done.
+ Function to filter a list of numbers for prime numbers. 
+ Input list numList must start at 2 and be monotonically increasing.
+ Basically input must be [2..n].
 *)
-let rec isPrime number numSqrt primeList = 
-    match primeList with
-    | head :: tail ->
-        if numSqrt < head then
-            true
-        else if number % head = 0L then
-            false
-        else
-            isPrime number numSqrt tail
-    | [] -> true
-
-(* Function to get a list of prime numbers. *)
-let rec getPrimes current upperBound primeList =
-    if current > upperBound then
-        primeList
-    else
-        let sq = current |> double |> sqrt |> ceil |> int64
-        let isCurrentPrime = isPrime current sq primeList
-        match isCurrentPrime with
-        | true -> getPrimes (current + 1L) upperBound (current::primeList)
-        | false -> getPrimes (current + 1L) upperBound primeList
+let rec findPrimes numList primeList =
+    match numList with
+    | head::tail ->
+        let newList = List.filter (fun x -> x % head <> 0L) tail
+        findPrimes newList (head::primeList)
+    | [] -> List.rev primeList
 
 (* Function to read an int64 from stdin. *)
 let rec readLongFromStdin() = 
@@ -58,28 +36,23 @@ let rec readLongFromStdin() =
     try
         let longVal =  v |> int64
 
-        if longVal < 1L then
+        if longVal < 2L then
             printfn "Invalid integer: %d" longVal
             readLongFromStdin()
         else
-            Some longVal
+            longVal
     with 
-    | :? System.FormatException -> 
+    | _ -> 
         printfn "Invalid input: \"%s\"" v
         readLongFromStdin()
-    | _ -> None
 
 [<EntryPoint>]
 let main argv =
     printfn "This is a program to find all primes from 1 to N."
     printfn "Please enter a number: "
     let value = readLongFromStdin()
-    match value with
-    | Some n ->
-        let primeList = getPrimes 2L n []
-        printfn "The prime numbers between 1 and %d are:" n
-        primeList |> List.rev |> printPrimeList
-        0
-    | None ->
-        printfn "An error has occured."
-        -1
+    //let primeList = getPrimes 2L value []
+    let primeList = findPrimes [2L..value] []
+    printfn "The prime numbers between 1 and %d are:" value
+    List.iter (fun x -> printfn "%d" x) primeList
+    0
