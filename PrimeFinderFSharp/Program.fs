@@ -3,17 +3,8 @@
 
  The basic algorithm works like this:
  for each number (num) from 2 to n:
-     find the modulo of num and all the prime numbers less than the square root of n
-     if none of the prime numbers modulo with num to equal zero, than num is prime
-     else num is not prime
- this is possible because composite numbers can be seen as prime numbers multiplied together
- therefore we only need to divide by prime numbers to check for primality, because all non-prime 
- numbers can be factorized into prime numbers.
- this algorithm is effectively more efficient repeated division.
-
- Implementation notes:
- I have tried to use as many functional features/patterns as possible to make this not a straight port 
- of the c# version.
+    find the smallest number in the list and remove it; this is a prime number
+    remove all numbers in the list divisible by that smallest prime number
 *)
 
 open System
